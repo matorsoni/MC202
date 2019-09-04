@@ -1,0 +1,7 @@
+Riemann: 31.25 UA
+Cauchy: 1.80 UA
+Newton: 3.35 UA
+Gauss: 1.50 UA
+Euler: 16.85 UA
+Leibniz: 3.60 UA
+Fermat: 3.05 UA

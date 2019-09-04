@@ -1,0 +1,56 @@
+Riemann
+Cauchy
+Newton
+Gauss
+Euler
+Leibniz
+Fermat
+24
+1.00 2.00 Gauss
+2.00 3.00 Gauss
+3.00 3.00 Newton
+3.00 6.00 Newton
+3.50 6.00 Newton
+3.50 5.00 Newton
+5.00 5.00 Leibniz
+5.00 6.00 Leibniz
+6.00 7.00 Riemann
+6.00 10.00 Riemann
+6.50 11.00 Riemann
+7.50 12.00 Riemann
+9.50 12.00 Euler
+10.50 11.00 Euler
+11.00 10.00 Euler
+11.00 7.00 Euler
+12.00 6.00 Euler
+12.00 5.00 Cauchy
+13.50 5.00 Fermat
+13.50 6.00 Fermat
+14.00 6.00 Fermat
+14.00 3.00 Fermat
+15.00 3.00 Fermat
+16.00 2.00 Fermat
+1.00 2.00 Gauss
+2.00 2.00 Gauss
+3.00 2.00 Newton
+3.00 2.00 Newton
+3.50 3.80 Newton
+3.50 3.80 Newton
+5.00 3.80 Leibniz
+5.00 3.80 Leibniz
+6.00 2.00 Riemann
+6.00 2.00 Riemann
+6.50 2.00 Riemann
+7.50 3.00 Riemann
+9.50 3.00 Euler
+10.50 2.00 Euler
+11.00 2.00 Euler
+11.00 2.00 Euler
+12.00 3.80 Euler
+12.00 3.80 Cauchy
+13.50 3.80 Fermat
+13.50 3.80 Fermat
+14.00 2.00 Fermat
+14.00 2.00 Fermat
+15.00 2.00 Fermat
+16.00 2.00 Fermat

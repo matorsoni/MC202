@@ -1,0 +1,7 @@
+Newton: 0.00 UA
+Gauss: 3.00 UA
+Riemann: 0.00 UA
+Cauchy: 6.00 UA
+Euler: 3.00 UA
+Fermat: 0.00 UA
+Leibniz: 0.00 UA
