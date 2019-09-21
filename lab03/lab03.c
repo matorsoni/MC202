@@ -1,7 +1,17 @@
+/*
+Aluno: Mateus Orsoni Cabral
+RA: 147349
+Disciplina: MC202 turma H
+
+Os nomes de variáveis e de funções são eventualmente escritos em inglês apenas por uma questão de costume. 
+Os comentários ao longo do código serão sempre em português.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+// Struct que representa uma rota, i.e, uma matrix de entradas inteiras 
 typedef struct Bitmap
 {
     int rows;
@@ -9,14 +19,20 @@ typedef struct Bitmap
     int* buffer;
 }Bitmap;
 
+// Declaração de funções pertinentes ao struct Bitmap
 void constructor(Bitmap* p_bitmap, int p_rows, int p_cols);
 bool isInsideBitmap(Bitmap* p_bitmap, int p_row, int p_col);
 void setState(Bitmap* p_bitmap, int p_row, int p_col, int p_state);
 int getState(Bitmap* p_bitmap, int p_row, int p_col);
 void printBitmap(Bitmap* p_bitmap);
 
+// Declaração das funções que calculam o número de tropas de uma rota 
+void recursiveCluster(Bitmap* p_bitmap, int p_row, int p_col);
+int countTroops(Bitmap* p_bitmap);
+
 int main()
 {
+    // Número de testes de entrada
     int T;
     scanf("%d", &T);
 
@@ -26,6 +42,7 @@ int main()
         scanf("%d %d", &M, &N);
         int width = N/3;
 
+        // Inicialização com valores 0 dos três Bitmaps: rotas superior, intermediaria e inferior
         Bitmap topLane;
         constructor(&topLane, M, width);
         Bitmap midLane;
@@ -33,6 +50,8 @@ int main()
         Bitmap botLane;
         constructor(&botLane, M, width);
 
+        // Leitura das linhas de entrada do terminal.
+        // Cada linha de entrada preenche uma linha de todas as 3 rotas. 
         for (int row = 0; row < M; row++)
             for (int col = 0; col < N; col++)
             {
@@ -47,10 +66,18 @@ int main()
                     setState(&botLane, row, col-2*width, bit);
             }
 
-        printBitmap(&topLane);
-        printBitmap(&midLane);
-        printBitmap(&botLane);
+        // Cálculo do número de tropas de cada rota
+        int topTroops = countTroops(&topLane);
+        int midTroops = countTroops(&midLane);
+        int botTroops = countTroops(&botLane);
 
+        // Saída
+        printf("Teste: %d\n", t+1);
+        printf("Rota superior: %d\n", topTroops);
+        printf("Rota intermediaria: %d\n", midTroops);
+        printf("Rota inferior: %d\n", botTroops);
+
+        // Limpar toda memória alocada dinamicamente
         free(topLane.buffer);
         free(midLane.buffer);
         free(botLane.buffer);
@@ -69,7 +96,7 @@ void constructor(Bitmap* p_bitmap, int p_rows, int p_cols)
     p_bitmap->buffer = calloc(p_rows*p_cols, sizeof(int));
 }
 
-// Checa se uma dada posição pertence as dimensoes do Bitmap
+// Checa se uma dada posição pertence as dimensões do Bitmap
 bool isInsideBitmap(Bitmap* p_bitmap, int p_row, int p_col)
 {
     return ((p_row >= 0) && (p_row < p_bitmap->rows) && (p_col >= 0) && (p_col < p_bitmap->cols));
@@ -81,7 +108,7 @@ void setState(Bitmap* p_bitmap, int p_row, int p_col, int p_state)
     if (isInsideBitmap(p_bitmap, p_row, p_col))
         p_bitmap->buffer[p_col + (p_bitmap->cols)*p_row] = p_state;
     else
-        printf("Erro: Posicao fora do Bitmap\n");
+        printf("getState erro: Posicao (%d, %d) fora do Bitmap\n", p_row, p_col);
 }
 
 int getState(Bitmap* p_bitmap, int p_row, int p_col)
@@ -90,24 +117,12 @@ int getState(Bitmap* p_bitmap, int p_row, int p_col)
         return p_bitmap->buffer[p_col + (p_bitmap->cols)*p_row];
     else
     {
-        printf("Erro: Posicao fora do Bitmap\n");
+        printf("setState erro: Posicao (%d, %d) fora do Bitmap\n", p_row, p_col);
         return -1;
     }
 }
 
-int countTroops(Bitmap* p_lane)
-{
-    /*
-    Ideia inicial:
-    Percorrer as linhas do bitmap até encontrar 1, posição (m,n).
-    Lançar a função recursiva em (m,n) para encontrar todas as posições que pertencem à tropa.
-    Retirar essas posições da tropa do seguinte vetor de LinkedList: vetor[i] = lista de índices da linha i que são 0.
-    O bitmap é percorrido à partir dos índices contidos em "vetor", pra que a busca ignore tropas já encontradas.
-
-    */
-    return 0;
-}
-
+// Imprime a situação atual de um Bitmap, útil para debug
 void printBitmap(Bitmap* p_bitmap)
 {
     for (int row=0; row<p_bitmap->rows; row++)
@@ -117,4 +132,47 @@ void printBitmap(Bitmap* p_bitmap)
 
         printf("\n");
     }
+}
+
+// Função recursiva que escreve -1 em todas as posições de uma tropa, ou seja, 
+// quando o valor inicial armazenado na posição dada é 1.
+void recursiveCluster(Bitmap* p_bitmap, int p_row, int p_col)
+{
+    // Checa se a posição está dentro do Bitmap
+    if (!isInsideBitmap(p_bitmap, p_row, p_col))
+        return;
+
+    if(getState(p_bitmap, p_row, p_col) == 1)
+    {
+        setState(p_bitmap, p_row, p_col, -1);
+
+        // Checar posição ao leste
+        recursiveCluster(p_bitmap, p_row, p_col+1);
+        // Checar posição ao norte
+        recursiveCluster(p_bitmap, p_row-1, p_col);
+        // Checar posição ao oeste
+        recursiveCluster(p_bitmap, p_row, p_col-1);
+        // Checar posição ao sul
+        recursiveCluster(p_bitmap, p_row+1, p_col);
+    }
+}
+
+// Função que retorna o número de tropas de uma rota dada.
+int countTroops(Bitmap* p_bitmap)
+{
+    int troops = 0;
+    // Percorre as linhas do bitmap até encontrar o valor 1, posição (row,col).
+    for (int row = 0; row < p_bitmap->rows; row++)
+        for (int col = 0; col < p_bitmap->cols; col++)
+        {
+            if(getState(p_bitmap, row, col) == 1)
+            {
+                // Lança a função recursiva em (row,col) para escrever -1 em todas as posições que pertencem à esta tropa.
+                // Deste modo, as posições com valores -1 serão ignoradas na busca das próximas tropas.
+                recursiveCluster(p_bitmap, row, col);
+                troops++;
+            }
+        }
+
+    return troops;
 }
