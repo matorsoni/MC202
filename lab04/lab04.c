@@ -10,7 +10,24 @@ Os comentários ao longo do código serão sempre em português.
 
 int main()
 {
-    printf("NULL = %d\n", NULL);
+    Lista lista;
+    lista.primeiro = NULL;
+
+    Item item = constructItem("bla", 1);
+    Item item2 = constructItem("bli", 10);
+
+    append(&lista, item);
+    append(&lista, item2);
+
+    imprimirLista(&lista);
+    destructList(&lista);
+/*
+    No* i = malloc(sizeof(No));
+    printf("%p\n", (void*)i);
+    free(i);
+    i = NULL;
+    printf("%p\n", (void*)i);
     return 0;
+*/
 
 }

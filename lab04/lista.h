@@ -15,6 +15,7 @@ Os comentários ao longo do código serão sempre em português.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_MERCADOS 30
 #define MAX_NOME 60
@@ -116,3 +117,12 @@ void excluirItem(Lista *lista, char *nome_item);
 *      - Lista *lista: Ponteiro para a lista a ser invertida                              *
 */
 void inverterLista(Lista *lista);
+
+
+// ----------------------- Utilidades para o struct Lista ------------------------
+void destructList(Lista* lista);
+No* getLastElement(Lista* lista);
+void append(Lista* lista, Item item);
+
+// ----------------------- Utilidades para o struct Item ------------------------
+Item constructItem(char* name, int quantity);
