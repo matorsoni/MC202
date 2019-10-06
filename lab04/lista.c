@@ -23,7 +23,24 @@ void imprimirLista(Lista *lista)
     }
 }
 
-void juntarListas(Lista *lista_1, Lista *lista_2);
+void juntarListas(Lista *lista_1, Lista *lista_2)
+{
+    if (lista_2->primeiro == NULL)
+        return;
+    
+    No* currentNode_2;
+    for (currentNode_2 = lista_2->primeiro; currentNode_2 != NULL; currentNode_2 = currentNode_2->prox)
+    {
+        char* itemName_2 = currentNode_2->produto.nome;
+        int itemQuantity_2 = currentNode_2->produto.quantidade;
+        No* foundNode_1 = findItem(lista_1, itemName_2);
+
+        if (foundNode_1 == NULL)
+            append(lista_1, currentNode_2->produto);
+        else
+            foundNode_1->produto.quantidade += itemQuantity_2;        
+    }
+}
 
 void trocarItens(Lista *lista_1, Lista *lista_2, char *nome_item1, char *nome_item2);
 
@@ -78,6 +95,7 @@ No* getLastElement(Lista* lista)
     
     return lastNode;
 }
+
 void append(Lista* lista, Item item)
 {
     if (lista->primeiro == NULL)
@@ -95,6 +113,25 @@ void append(Lista* lista, Item item)
     }
 }
 
+No* findItem(Lista* lista, char* itemName)
+{
+    if (lista->primeiro == NULL)
+        return NULL;
+    
+    No* returnNode = NULL;
+    No* currentNode = lista->primeiro;
+    while (currentNode != NULL)
+    {
+        if (compareStrings(currentNode->produto.nome, itemName))
+        {
+            returnNode = currentNode;
+            break;
+        }
+        currentNode = currentNode->prox;
+    }
+
+    return returnNode;
+}
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity)
@@ -103,4 +140,26 @@ Item constructItem(char* name, int quantity)
     item.quantidade = quantity;
     strcpy(item.nome, name);
     return item;
+}
+
+// ----------------------- Utilidades gerais ------------------------
+bool compareStrings(char* p_string1, char* p_string2)
+{
+    // Retorna "true" se ambas as strings são iguais, "false" caso contrário.
+    bool returnValue = true;
+    int i=0;
+    while(p_string1[i] != '\0')
+    {
+        if(p_string1[i] != p_string2[i])
+        {
+            returnValue = false;
+            break;
+        }
+        i++;
+    }
+    // Compara se o último char de ambas strings é '\0'
+    if(p_string1[i] != p_string2[i])
+        returnValue = false;
+
+    return returnValue;
 }

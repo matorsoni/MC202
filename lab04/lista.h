@@ -15,6 +15,7 @@ Os comentários ao longo do código serão sempre em português.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #define MAX_MERCADOS 30
@@ -123,6 +124,10 @@ void inverterLista(Lista *lista);
 void destructList(Lista* lista);
 No* getLastElement(Lista* lista);
 void append(Lista* lista, Item item);
+No* findItem(Lista* lista, char* itemName);
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity);
+
+// ----------------------- Utilidades gerais ------------------------
+bool compareStrings(char* p_string1, char* p_string2);
