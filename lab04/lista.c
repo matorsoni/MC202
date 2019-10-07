@@ -8,33 +8,37 @@ Os comentários ao longo do código serão sempre em português.
 
 #include "lista.h"
 
-void imprimirLista(Lista *lista)
+void imprimirLista(Lista* lista)
 {
-    if (lista->primeiro != NULL)
+    if (lista->primeiro == NULL)
+        return;
+
+    No* currentNode = lista->primeiro;
+    while (currentNode != NULL)
     {
-        No* currentNode = lista->primeiro;
-        while (currentNode != NULL)
-        {
-            char* name = currentNode->produto.nome;
-            int quantity = currentNode->produto.quantidade;
-            printf("item: %s, quantidade: %d\n", name, quantity);
-            currentNode = currentNode->prox;
-        }
+        char* name = currentNode->produto.nome;
+        int quantity = currentNode->produto.quantidade;
+        printf("item: %s, quantidade: %d\n", name, quantity);
+        currentNode = currentNode->prox;
     }
+    
 }
 
-void juntarListas(Lista *lista_1, Lista *lista_2)
+void juntarListas(Lista* lista_1, Lista* lista_2)
 {
     if (lista_2->primeiro == NULL)
         return;
     
     No* currentNode_2;
+    // Para cada item da lista 2, testar se este já pertence à lista 1
     for (currentNode_2 = lista_2->primeiro; currentNode_2 != NULL; currentNode_2 = currentNode_2->prox)
     {
         char* itemName_2 = currentNode_2->produto.nome;
         int itemQuantity_2 = currentNode_2->produto.quantidade;
         No* foundNode_1 = findItem(lista_1, itemName_2);
 
+        // Se o item atual não pertence à lista 1, adicioná-lo ao fim da lista 1
+        // Caso ele já pertença à lista 1, somar a sua quantidade  
         if (foundNode_1 == NULL)
             append(lista_1, currentNode_2->produto);
         else
@@ -42,48 +46,147 @@ void juntarListas(Lista *lista_1, Lista *lista_2)
     }
 }
 
-void trocarItens(Lista *lista_1, Lista *lista_2, char *nome_item1, char *nome_item2);
-
-void adicionarFim(Lista *lista, Item item);
-
-void adicionarAntes(Lista *lista, Item item, char *nome_item);
-
-void adicionarDepois(Lista*lista, Item item, char *nome_item);
-
-void diminuirQuantidade(Lista *lista, char *nome_item, int qtd);
-
-void excluirItem(Lista *lista, char *nome_item);
-
-void inverterLista(Lista *lista);
-
-// ---------------------------------- Utilidades para o struct Lista ----------------------------------
-void destructList(Lista* lista)
+void trocarItens(Lista* lista_1, Lista* lista_2, char* nome_item1, char* nome_item2)
 {
-    if (lista->primeiro == NULL)
-    { 
-printf("empty list\n"); // Só pra debug, apagar depois
+    No* node_1 = findItem(lista_1, nome_item1);
+    No* node_2 = findItem(lista_2, nome_item2);
+
+    if ((node_1 != NULL) && (node_2 != NULL))
+    {
+        Item aux = node_1->produto;
+        node_1->produto = node_2->produto;
+        node_2->produto = aux;
+    }
+}
+
+void adicionarFim(Lista* lista, Item item)
+{
+    append(lista, item);
+}
+
+void adicionarAntes(Lista* lista, Item item, char* nome_item)
+{
+    No* foundItem = findItem(lista, nome_item);
+    if (foundItem == NULL)
+        return;
+
+    if (foundItem == lista->primeiro)
+    {
+        lista->primeiro = malloc(sizeof(No));
+        lista->primeiro->produto = item;
+        lista->primeiro->prox = foundItem;
         return;
     }
+
+    // Encontrar o No* do item anterior ao item dado como entrada (nome_item)
+    No* previousItem = lista->primeiro;
+    while (previousItem->prox != NULL)
+    {
+        if (previousItem->prox == foundItem)
+        {
+            previousItem->prox = malloc(sizeof(No));
+            previousItem->prox->produto = item;
+            previousItem->prox->prox = foundItem;
+            break;
+        }
+
+        previousItem = previousItem->prox;
+    }
+}
+
+void adicionarDepois(Lista* lista, Item item, char* nome_item)
+{
+    No* foundItem = findItem(lista, nome_item);
+    if (foundItem == NULL)
+        return;
+
+    if (foundItem->prox == NULL)
+        append(lista, item);
+    else
+    {
+        No* aux = foundItem->prox;
+        foundItem->prox = malloc(sizeof(No));
+        foundItem->prox->produto = item;
+        foundItem->prox->prox = aux;
+    } 
+}
+
+void diminuirQuantidade(Lista* lista, char* nome_item, int qtd)
+{
+    No* foundItem = findItem(lista, nome_item);
+    if (foundItem == NULL)
+        return;
+    
+    foundItem->produto.quantidade -= qtd;
+    if (foundItem->produto.quantidade <= 0)
+        excluirItem(lista, nome_item);
+}
+
+void excluirItem(Lista* lista, char* nome_item)
+{
+    if (lista->primeiro == NULL)
+        return;
     
     if (lista->primeiro->prox == NULL)
     {
-printf("remove (%s, %d)\n", lista->primeiro->produto.nome, lista->primeiro->produto.quantidade); // Só pra debug, apagar depois
-        free(lista->primeiro);
-        lista->primeiro = NULL;
+        if (compareStrings(lista->primeiro->produto.nome, nome_item))
+            popLast(lista);
         return;
     }
 
-    No* beforeLastNode = lista->primeiro;
-    while (beforeLastNode->prox->prox != NULL)
-        beforeLastNode = beforeLastNode->prox;
+    if (compareStrings(lista->primeiro->produto.nome, nome_item))
+    {
+        No* aux = lista->primeiro->prox;
+        free(lista->primeiro);
+        lista->primeiro = aux;
+        return;
+    }
 
-printf("remove (%s, %d)\n", beforeLastNode->prox->produto.nome, beforeLastNode->prox->produto.quantidade); // Só pra debug, apagar depois
-    free(beforeLastNode->prox);
-    beforeLastNode->prox = NULL;
+    No* currentNode = lista->primeiro->prox;
+    No* previousNode = lista->primeiro;
+    while (currentNode != NULL)
+    {
+        if (compareStrings(currentNode->produto.nome, nome_item))
+        {
+            previousNode->prox = currentNode->prox;
+            free(currentNode);
+            break;
+        }
 
-    destructList(lista);
+        currentNode = currentNode->prox;
+        previousNode = previousNode->prox;
+    }    
 }
 
+void inverterLista(Lista* lista)
+{
+    if (lista->primeiro == NULL)
+        return;
+    if (lista->primeiro->prox == NULL)
+        return;
+    
+    Lista inverted;
+    inverted.primeiro = NULL;
+    int lastItemQuantity = getLastElement(lista)->produto.quantidade;
+
+    while (lista->primeiro != NULL)
+    {
+        if (getLastElement(lista)->produto.quantidade < lastItemQuantity)
+        {
+            char* itemName = getLastElement(lista)->produto.nome;
+            int itemQuantity = getLastElement(lista)->produto.quantidade;
+            append(&inverted, constructItem(itemName, itemQuantity + lastItemQuantity));
+        }
+        else
+            append(&inverted, getLastElement(lista)->produto);    
+
+        popLast(lista);
+    }
+
+    lista->primeiro = inverted.primeiro;
+}
+
+// ---------------------------------- Utilidades para o struct Lista ----------------------------------
 No* getLastElement(Lista* lista)
 {
     if (lista->primeiro == NULL)
@@ -113,6 +216,34 @@ void append(Lista* lista, Item item)
     }
 }
 
+void popLast(Lista* lista)
+{
+    if (lista->primeiro == NULL)
+        return;
+
+    if (lista->primeiro->prox == NULL)
+    {
+printf("remove (%s, %d)\n", lista->primeiro->produto.nome, lista->primeiro->produto.quantidade); // Só pra debug, apagar depois
+        free(lista->primeiro);
+        lista->primeiro = NULL;
+        return;
+    }
+
+    No* beforeLastNode = lista->primeiro;
+    while (beforeLastNode->prox->prox != NULL)
+        beforeLastNode = beforeLastNode->prox;
+
+printf("remove (%s, %d)\n", beforeLastNode->prox->produto.nome, beforeLastNode->prox->produto.quantidade); // Só pra debug, apagar depois
+    free(beforeLastNode->prox);
+    beforeLastNode->prox = NULL;
+}
+
+void destructList(Lista* lista)
+{
+    while (lista->primeiro != NULL)
+        popLast(lista);
+}
+
 No* findItem(Lista* lista, char* itemName)
 {
     if (lista->primeiro == NULL)
@@ -132,6 +263,8 @@ No* findItem(Lista* lista, char* itemName)
 
     return returnNode;
 }
+
+void setItem(No* node, Item item);
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity)

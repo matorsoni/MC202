@@ -121,10 +121,12 @@ void inverterLista(Lista *lista);
 
 
 // ----------------------- Utilidades para o struct Lista ------------------------
-void destructList(Lista* lista);
 No* getLastElement(Lista* lista);
 void append(Lista* lista, Item item);
+void popLast(Lista* lista);
+void destructList(Lista* lista);
 No* findItem(Lista* lista, char* itemName);
+void setItem(No* node, Item item);
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity);
