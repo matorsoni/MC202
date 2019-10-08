@@ -130,6 +130,8 @@ void setItem(No* node, Item item);
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity);
-
+void printItem(Item item);
 // ----------------------- Utilidades gerais ------------------------
 bool compareStrings(char* p_string1, char* p_string2);
+void cleanStringInput(char* rawString, char* outputString);
+Item parseItemInput();

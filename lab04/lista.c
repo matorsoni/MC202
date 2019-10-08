@@ -16,9 +16,7 @@ void imprimirLista(Lista* lista)
     No* currentNode = lista->primeiro;
     while (currentNode != NULL)
     {
-        char* name = currentNode->produto.nome;
-        int quantity = currentNode->produto.quantidade;
-        printf("item: %s, quantidade: %d\n", name, quantity);
+        printItem(currentNode->produto);
         currentNode = currentNode->prox;
     }
     
@@ -223,7 +221,6 @@ void popLast(Lista* lista)
 
     if (lista->primeiro->prox == NULL)
     {
-printf("remove (%s, %d)\n", lista->primeiro->produto.nome, lista->primeiro->produto.quantidade); // Só pra debug, apagar depois
         free(lista->primeiro);
         lista->primeiro = NULL;
         return;
@@ -233,7 +230,6 @@ printf("remove (%s, %d)\n", lista->primeiro->produto.nome, lista->primeiro->prod
     while (beforeLastNode->prox->prox != NULL)
         beforeLastNode = beforeLastNode->prox;
 
-printf("remove (%s, %d)\n", beforeLastNode->prox->produto.nome, beforeLastNode->prox->produto.quantidade); // Só pra debug, apagar depois
     free(beforeLastNode->prox);
     beforeLastNode->prox = NULL;
 }
@@ -275,6 +271,11 @@ Item constructItem(char* name, int quantity)
     return item;
 }
 
+void printItem(Item item)
+{
+    printf("item: %s, quantidade: %d\n", item.nome, item.quantidade);
+}
+
 // ----------------------- Utilidades gerais ------------------------
 bool compareStrings(char* p_string1, char* p_string2)
 {
@@ -295,4 +296,42 @@ bool compareStrings(char* p_string1, char* p_string2)
         returnValue = false;
 
     return returnValue;
+}
+
+void cleanStringInput(char* rawString, char* output)
+{
+    int inputIndex = 0, outputIndex = 0;
+	char outputString[MAX_NOME];
+    while(rawString[inputIndex] != '\0')
+	{
+		if((rawString[inputIndex] == '(') || (rawString[inputIndex] == ',') || (rawString[inputIndex] == ')'))
+		{
+			inputIndex++;
+			continue;
+		}   
+		else
+		{	
+			outputString[outputIndex] = rawString[inputIndex];
+			outputIndex++;
+			inputIndex++;
+		}
+	}
+
+	outputString[outputIndex] = '\0';
+    strcpy(output, outputString);
+}
+
+Item parseItemInput()
+{
+    char string_1[MAX_NOME+2]; // MAX_NOME+2 para levar em conta os chars "(" e ","
+    char string_2[MAX_NOME+1]; // MAX_NOME+1 para levar em conta o char ")"
+    scanf("%s", string_1);
+    scanf("%s", string_2);
+
+    char itemName[MAX_NOME];
+    char itemQuantityString[MAX_NOME];
+    cleanStringInput(string_1, itemName);
+    cleanStringInput(string_2, itemQuantityString);
+
+    return constructItem(itemName, atoi(itemQuantityString));
 }
