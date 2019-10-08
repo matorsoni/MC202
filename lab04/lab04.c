@@ -79,7 +79,7 @@ int main()
     {
         if (listArray[index].primeiro != NULL)
         {
-            printf("lista %d:\n", index);
+            printf("Lista %d:\n", index);
             imprimirLista(&listArray[index]);
         }
 
