@@ -19,7 +19,6 @@ void imprimirLista(Lista* lista)
         printItem(currentNode->produto);
         currentNode = currentNode->prox;
     }
-    
 }
 
 void juntarListas(Lista* lista_1, Lista* lista_2)
@@ -122,6 +121,7 @@ void diminuirQuantidade(Lista* lista, char* nome_item, int qtd)
 
 void excluirItem(Lista* lista, char* nome_item)
 {
+    // Teste dos casos de lista vazia e com apenas um elemento.
     if (lista->primeiro == NULL)
         return;
     
@@ -132,6 +132,7 @@ void excluirItem(Lista* lista, char* nome_item)
         return;
     }
 
+    // Caso a lista tenha mais de 1 elemento, testar o primeiro separadamente.
     if (compareStrings(lista->primeiro->produto.nome, nome_item))
     {
         No* aux = lista->primeiro->prox;
@@ -140,6 +141,7 @@ void excluirItem(Lista* lista, char* nome_item)
         return;
     }
 
+    // Percorre a lista com dois No*, para não perder a referência do nó que será liberado.
     No* currentNode = lista->primeiro->prox;
     No* previousNode = lista->primeiro;
     while (currentNode != NULL)
@@ -163,10 +165,13 @@ void inverterLista(Lista* lista)
     if (lista->primeiro->prox == NULL)
         return;
     
+    // Cria uma nova lista inverted e preenche ela com os elementos na ordem invertida, 
+    // adicionando a quantidade do último elemento quando necessário.
     Lista inverted;
     inverted.primeiro = NULL;
     int lastItemQuantity = getLastElement(lista)->produto.quantidade;
 
+    // Preenche a lista inverted enquanto remove os elementos da lista original, até que não sobre nenhum elemento.
     while (lista->primeiro != NULL)
     {
         if (getLastElement(lista)->produto.quantidade < lastItemQuantity)
@@ -180,7 +185,7 @@ void inverterLista(Lista* lista)
 
         popLast(lista);
     }
-
+    // Faz a lista original apontar para o primeiro elemento da lista invertida.
     lista->primeiro = inverted.primeiro;
 }
 
@@ -189,7 +194,7 @@ No* getLastElement(Lista* lista)
 {
     if (lista->primeiro == NULL)
         return NULL;
-    
+
     No* lastNode = lista->primeiro;
     while (lastNode->prox != NULL)
         lastNode = lastNode->prox;
@@ -216,6 +221,7 @@ void append(Lista* lista, Item item)
 
 void popLast(Lista* lista)
 {
+    // Testar os casos de lista vazia e lista com apenas um elemento.
     if (lista->primeiro == NULL)
         return;
 
@@ -225,7 +231,7 @@ void popLast(Lista* lista)
         lista->primeiro = NULL;
         return;
     }
-
+    // Encontrar o penúltimo nó da lista para poder eliminar o último nó.
     No* beforeLastNode = lista->primeiro;
     while (beforeLastNode->prox->prox != NULL)
         beforeLastNode = beforeLastNode->prox;
@@ -245,7 +251,7 @@ No* findItem(Lista* lista, char* itemName)
     if (lista->primeiro == NULL)
         return NULL;
     
-    No* returnNode = NULL;
+    No* returnNode = NULL; // Retorna NULL caso não seja encontrado o nome dado como entrada.
     No* currentNode = lista->primeiro;
     while (currentNode != NULL)
     {
@@ -259,8 +265,6 @@ No* findItem(Lista* lista, char* itemName)
 
     return returnNode;
 }
-
-void setItem(No* node, Item item);
 
 // ----------------------- Utilidades para o struct Item ------------------------
 Item constructItem(char* name, int quantity)

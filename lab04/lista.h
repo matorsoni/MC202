@@ -121,17 +121,34 @@ void inverterLista(Lista *lista);
 
 
 // ----------------------- Utilidades para o struct Lista ------------------------
+/* Retorna o endereço do último nó da lista */
 No* getLastElement(Lista* lista);
+
+/* Adiciona ao final da lista o item dado como argumento */
 void append(Lista* lista, Item item);
+
+/* Remove o último item da lista */
 void popLast(Lista* lista);
+
+/* Destroi o objeto Lista, liberando toda a memória alocada no heap */
 void destructList(Lista* lista);
+
+/* Retorna o endereço do nó que contém o item especificado na entrada */
 No* findItem(Lista* lista, char* itemName);
-void setItem(No* node, Item item);
 
 // ----------------------- Utilidades para o struct Item ------------------------
+/* Constroi e retorna um objeto Item à partir do nome e da quantidade fornecidos como entrada */
 Item constructItem(char* name, int quantity);
+
+/* Imprime o objeto Item conforme esperado na saída do programa */
 void printItem(Item item);
+
 // ----------------------- Utilidades gerais ------------------------
+/* Retorna 1 se as strings são iguais, 0 caso contrário */
 bool compareStrings(char* p_string1, char* p_string2);
+
+/* Recebe uma rawString no formato "(x," ou "y)" e escreve apenas "x" ou "y" na outputString */
 void cleanStringInput(char* rawString, char* outputString);
+
+/* Captura uma entrada "(x, y)" e retorna o objeto Item correspondente */
 Item parseItemInput();

@@ -8,7 +8,7 @@ Os comentários ao longo do código serão sempre em português.
 
 #include "lista.h"
 
-
+/* Funções que capturam as entradas do teclado e realizam as manipulações correspondentes */
 void parseCodeA(Lista* listArray);
 void parseCodeC(Lista* listArray, int* listCount);
 void parseCodeD(Lista* listArray);
@@ -73,18 +73,6 @@ int main()
         default:
             break;
         }
-
-        //excluir
-        for (int index=0; index < listCount; index++)
-        {
-        if (listArray[index].primeiro != NULL)
-        {
-            printf("lista %d:\n", index);
-            imprimirLista(&listArray[index]);
-        }
-
-        destructList(&listArray[index]);
-        }
     }
 
     for (int index=0; index < listCount; index++)
@@ -97,7 +85,7 @@ int main()
 
         destructList(&listArray[index]);
     }
-       
+   
     return 0;
 }
 
