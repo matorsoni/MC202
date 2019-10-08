@@ -15,7 +15,7 @@ void parseCodeD(Lista* listArray);
 void parseCodeE(Lista* listArray);
 void parseCodeF(Lista* listArray);
 void parseCodeI(Lista* listArray);
-void parseCodeJ(Lista* listArray);
+void parseCodeJ(Lista* listArray, int* listCount);
 void parseCodeT(Lista* listArray);
 void parseCodeX(Lista* listArray);
 
@@ -59,7 +59,7 @@ int main()
             break;
 
         case 74: // J
-            parseCodeJ(listArray);
+            parseCodeJ(listArray, &listCount);
             break;
         
         case 84: // T
@@ -75,6 +75,7 @@ int main()
         }
     }
 
+    // Imprime e em seguida destroi cada lista do vetor
     for (int index=0; index < listCount; index++)
     {
         if (listArray[index].primeiro != NULL)
@@ -102,10 +103,18 @@ void parseCodeA(Lista* listArray)
 
 void parseCodeC(Lista* listArray, int* listCount)
 {
-    int index = *listCount;
-    listArray[index].primeiro = NULL;
     Item item = parseItemInput();
-    append(&listArray[index], item);
+    // Busca a primeira lista vazia no vetor para adicionar o item
+    for (int index=0; index<*listCount; index++)
+        if (listArray[index].primeiro == NULL)
+        {
+            append(&listArray[index], item);
+            return;
+        }
+
+    // Caso nenhuma lista vazia exista, uma nova é criada e recebe o item
+    listArray[*listCount].primeiro = NULL;    
+    append(&listArray[*listCount], item);
     (*listCount)++;
 }
 
@@ -148,7 +157,7 @@ void parseCodeI(Lista* listArray)
     inverterLista(&listArray[index]);
 }
 
-void parseCodeJ(Lista* listArray)
+void parseCodeJ(Lista* listArray, int* listCount)
 {
     int index_1, index_2;
     scanf("%d", &index_1);
