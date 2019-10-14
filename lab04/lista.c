@@ -41,6 +41,9 @@ void juntarListas(Lista* lista_1, Lista* lista_2)
         else
             foundNode_1->produto.quantidade += itemQuantity_2;        
     }
+
+    // Destruir lista_2 após a operação 
+    destructList(lista_2);
 }
 
 void trocarItens(Lista* lista_1, Lista* lista_2, char* nome_item1, char* nome_item2)

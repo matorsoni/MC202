@@ -164,7 +164,7 @@ void parseCodeJ(Lista* listArray, int* listCount)
     scanf("%d", &index_2);
 
     juntarListas(&listArray[index_1], &listArray[index_2]);
-    destructList(&listArray[index_2]);
+    //destructList(&listArray[index_2]);
 }
 
 void parseCodeT(Lista* listArray)
