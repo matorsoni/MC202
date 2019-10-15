@@ -16,6 +16,8 @@ typedef struct Node{
     struct Node* next;
 }Node;
 
+// Struct que representa uma sequência de inteiros.
+// As funções implementadas para o struct Sequence são gerais o suficiente para que esta (sirva) como uma pilha ou uma fila
 typedef struct Sequence{
     Node* first;
 }Sequence;
@@ -150,20 +152,33 @@ int main()
         updateTrapQueue(&trapQueue);
     }
 
-//printSequence(&current);
-
     Sequence playerP = readSequence();
     Sequence playerI = readSequence();
-    int scoreP = computeScore(&current, &playerP);
-    int scoreI = computeScore(&current, &playerI);
 
-    if (scoreP > scoreI)
-        printf("P\n");
-    else if (scoreP < scoreI)
-        printf("I\n");
+    // Checar se a sequência final é vazia
+    if (current.first == NULL)
+    {
+        if ((playerP.first == NULL) && (playerI.first != NULL))
+            printf("P\n");
+        else if ((playerP.first != NULL) && (playerI.first == NULL))
+            printf("I\n");
+        else
+            printf("E\n");
+    }
     else
-        printf("E\n");
+    {
+        int scoreP = computeScore(&current, &playerP);
+        int scoreI = computeScore(&current, &playerI);
+
+        if (scoreP > scoreI)
+            printf("P\n");
+        else if (scoreP < scoreI)
+            printf("I\n");
+        else
+            printf("E\n");
+    }
     
+    // Desalocar toda memória e finalizar programa
     destructSequence(&trapQueue);
     destructSequence(&evenStack);
     destructSequence(&oddStack);
