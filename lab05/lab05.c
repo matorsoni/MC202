@@ -21,11 +21,22 @@ typedef struct Sequence{
 }Sequence;
 
 // ----------------------- Utilidades para o struct Sequence ------------------------
+/* Imprime todos os elementos de uma Sequence */
 void printSequence(Sequence* seq);
+
+/* Retorna o endereço do último elemento da sequência */
 Node* getLast(Sequence* seq);
+
+/* Remove o último elemento da sequência (útil para Pilhas) */
 void removeLast(Sequence* seq);
+
+/* Adiciona um elemento ao fim da sequêcia (útil para Pilha e Fila) */
 void enqueue(Sequence* seq, int value);
+
+/* Remove o primeiro elemento da sequência (útil para Fila) */
 void dequeue(Sequence* seq);
+
+/* Desaloca todos os elementos da sequência */
 void destructSequence(Sequence* seq);
 
 /* Bubble sort para ordenar uma sequencia em order crescente */
@@ -80,12 +91,12 @@ int main()
     char move = 0;
     while (move != 88) // move != "X"
     {
-printSequence(&current);
+//printSequence(&current);
         scanf(" %c", &move);
-printf("move = %c\n", move);
+//printf("move = %c\n", move);
         if (trapIsAvailable(&trapQueue))
         {
-printf("Trap is available\n");
+//printf("Trap is available\n");
             switch (move)
             {
             case 75: // K
@@ -139,7 +150,7 @@ printf("Trap is available\n");
         updateTrapQueue(&trapQueue);
     }
 
-printSequence(&current);
+//printSequence(&current);
 
     Sequence playerP = readSequence();
     Sequence playerI = readSequence();
@@ -210,6 +221,7 @@ void removeLast(Sequence* seq)
 void enqueue(Sequence* seq, int value)
 {
     Node* lastNode = getLast(seq);
+    // Caso a sequência esteja vazia, adicionar o primeiro elemento
     if (lastNode == NULL)
     {
         seq->first = malloc(sizeof(Node));
@@ -244,13 +256,6 @@ void dequeue(Sequence* seq)
 
 void destructSequence(Sequence* seq)
 {
-    //Node* lastNode = getLast(seq);
-    //while (lastNode != NULL)
-    //{
-    //    removeLast(seq);
-    //    lastNode = getLast(seq);
-    //}
-
     while (seq->first != NULL)
         dequeue(seq);
 }
