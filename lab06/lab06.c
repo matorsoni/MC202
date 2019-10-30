@@ -41,26 +41,55 @@ typedef struct BinaryTree
     int height;
 } BinaryTree;
 
-// ====================== Declaração de utilidades de no ======================
-void copyNode(no* src, no* dest);
 // ====================== Declaração de utilidades de BinaryTree ======================
+/* Imprime as folhas da arvore, isto é, todos os jogadores. Útil para debug */
 void printBracket(no* root);
+
+/* Aloca todos os nós da árvore binária, que serão em seguida preenchidos com os dados de entrada */
 void constructBracket(BinaryTree* bracket);
+
+/* Desaloca todos os nós da árvore binária */
 void destructBracket(BinaryTree* bracket);
+
+/* Retorna a folha de um jogador à partir de um índice, tal que 0 <= index < número total de jogadores */
 no* findPlayerByIndex(BinaryTree* bracket, int index);
+
+/* Insere um jogador em uma folha da árvore, à partir dos dados de entrada */
 void insertPlayerByGroup(BinaryTree* bracket, int groupIndex, char* name, char* country, char group);
 
+/* Realiza a permutação de jogadores para que as mesmas nacionalidades se enfrentem na primeira rodada */
 void balanceBracket(BinaryTree* bracket);
+
+/* Dado um país e um nome, encontra o jogador de mesmo país e de nome diferente */
 no* findCompatriot(BinaryTree* bracket, char* country, char* name);
+
+/* Troca as informações dos nós dados como entrada */
 void swapPlayers(BinaryTree* bracket, no* player, no* newPlayer);
+
+/* Dados 2 nomes de jogadores, encontra o nó cujos filhos são esses jogadores */
 void findParentNode(no* node, char* name_1, char* name_2, no** output);
+
+/* Recebe os dados de uma partida e avança o vencedor para o próximo nó da árvore */
 void updateBracket(BinaryTree* bracket, char* name_1, int score_1, int time_1, char* name_2, int score_2, int time_2);
-void printFinalBracket(no* root);
+
+/* Imprime o grupo especificado na entrada, no formato exigido no enunciado */
+void printGroup(no* root, char group);
+
+/* Imprime os dados do campeão, no formato exigido no enunciado */
 void printFinalResult(BinaryTree* bracket);
+
 // ====================== Declaração de utilidades gerais ======================
+/* Retorna 1 se as strings são iguais, 0 caso contrário */
 bool compareStrings(char* p_string1, char* p_string2);
+
+/* Calcula o logaritmo na base 2 de um inteiro X (resultado exato apenas se X é potência de 2) */
 int logBase2(int x);
+
+/* Calcula 2 elevado ao expoente inteiro dado como entrada */
 int powerOf2(int exponent);
+
+/* Converte um inteiro n em sua representação binária, */
+/* retornando um vetor de 0's e 1's cujo tamanho é dado como entrada */
 int* intToBinary(int n, int digits);
 
 // ---------------------- função main ----------------------
@@ -69,6 +98,7 @@ int main()
     int players;
     scanf("%d", &players);
 
+    // Inicializa a chave do campeonato
     BinaryTree bracket;
     bracket.root = NULL;
     bracket.height = logBase2(players);
@@ -93,25 +123,23 @@ int main()
             groupB++;
         }
     }
-printf("--- Bracket ---\n");
-printBracket(bracket.root);
 
+    // Realiza as permutas para equilibrar as nacionalidades nas primeiras partidas
     balanceBracket(&bracket);
-printf("--- Bracket ---\n");
-printBracket(bracket.root);
 
+    // Faz evoluir os grupos à partir dos dados das partidas
+    // Observação: número de partidas = número total de nós (menos a raíz) - número de folhas (número de jogadores)
     int totalNodes = powerOf2(bracket.height + 1) - 1;
-    // Fazer evoluir as chaves à partir dos resultados dados como entrada.
-    for (int match = 0; match < totalNodes-players; match++)
+    for (int match = 0; match < totalNodes - players; match++)
     {
         // Ler as entradas dos dados de cada partida
         char name_1[MAX], name_2[MAX];
         int score_1, time_1, score_2, time_2;
         scanf("%s %d %d %s %d %d", name_1, &score_1, &score_2, name_2, &time_1, &time_2);
-
         updateBracket(&bracket, name_1, score_1, time_1, name_2, score_2, time_2);
     }
 
+    // Imprime o reultado final
     printFinalResult(&bracket);
 
     return 0;
@@ -184,13 +212,16 @@ void destructBracket(BinaryTree* bracket)
 no* findPlayerByIndex(BinaryTree* bracket, int index)
 {
     // O índice deve ser um inteiro no intervalo [0, players-1], 
-    // sendo "players" o número de competidores (folhas) da chave
+    // sendo "players" o número de competidores (folhas) da chave.
+    // O índice 0 corresponde ao primeiro jogador do grupo A,
+    // enquanto o índice players-1 corresponde ao último do grupo B. 
     no* target = bracket->root;
     int digits = bracket->height;
     int players = powerOf2(digits);
     if ((index < 0) || (index >= players))
         return NULL;
     
+    // Os dígitos da representação binária corresondem às direções nas quais exploramos a árvore
     int* binary = intToBinary(index, digits);
     for (int i = 0; i < digits; i++)
     {
@@ -201,7 +232,7 @@ no* findPlayerByIndex(BinaryTree* bracket, int index)
     }
 
     free(binary);
-    return target;   
+    return target;
 }
 
 void insertPlayerByGroup(BinaryTree* bracket, int groupIndex, char* name, char* country, char group)
@@ -225,18 +256,15 @@ void balanceBracket(BinaryTree* bracket)
         return;
 
     int players = powerOf2(bracket->height);
-printf("players = %d\n", players);
+    // Itera cada par de jogadores
     for (int pair = 0; pair < players; pair += 2)
     {
         no* player_1 = findPlayerByIndex(bracket, pair);
         no* player_2 = findPlayerByIndex(bracket, pair+1);
-printf("player 1 = %s %s %c\n", player_1->nome, player_1->pais, player_1->g);
-printf("player 2 = %s %s %c\n", player_2->nome, player_2->pais, player_2->g);
         if (compareStrings(player_1->pais, player_2->pais) == false)
         {
-            // Caso o adversário não seja o compatriota, encontrar o compatriota e realizar a troca
+            // Caso o adversário 2 não seja o compatriota, encontrar o compatriota e realizar a troca
             no* newPlayer_2 = findCompatriot(bracket, player_1->pais, player_1->nome);
-printf("Compatriota = %s %s %c\n", newPlayer_2->nome, newPlayer_2->pais, newPlayer_2->g);
             swapPlayers(bracket, player_2, newPlayer_2);
         }
     }
@@ -248,7 +276,7 @@ no* findCompatriot(BinaryTree* bracket, char* country, char* name)
         return NULL;
 
     no* target = NULL;
-    // testa o nome do país de cada jogador
+    // Itera para cada jogador, testa o nome do país de cada jogador
     int players = powerOf2(bracket->height);
     for (int p = 0; p < players; p++)
     {
@@ -272,6 +300,7 @@ void swapPlayers(BinaryTree* bracket, no* player, no* newPlayer)
     
     char auxName[MAX];
     char auxCountry[MAX];
+
     strcpy(auxName, player->nome);
     strcpy(auxCountry, player->pais);
 
@@ -287,6 +316,7 @@ void findParentNode(no* node, char* name_1, char* name_2, no** output)
     if (node->esq == NULL || node->dir == NULL)
         return;
     
+    // Caso uma das condições é satisfeita, escreve o nó encontrado em "output"
     bool condition_1 = compareStrings(node->esq->nome, name_1) && compareStrings(node->dir->nome, name_2);
     bool condition_2 = compareStrings(node->esq->nome, name_2) && compareStrings(node->dir->nome, name_1);
     if (condition_1 || condition_2)
@@ -307,11 +337,6 @@ void updateBracket(BinaryTree* bracket, char* name_1, int score_1, int time_1, c
     
     no* parentNode = NULL;
     findParentNode(bracket->root, name_1, name_2, &parentNode);
-if (parentNode == NULL)
-printf("parentNode == NULL\n");
-else
-printf("parent node: esq = %s %s %c ; dir = %s %s %c\n", parentNode->esq->nome, parentNode->esq->pais, parentNode->esq->g, parentNode->dir->nome, parentNode->dir->pais, parentNode->dir->g);
-
     if (parentNode == NULL)
         return;
 
@@ -359,7 +384,7 @@ printf("parent node: esq = %s %s %c ; dir = %s %s %c\n", parentNode->esq->nome, 
     parentNode->g = winner->g;    
 }
 
-void printFinalBracket(no* root)
+void printGroup(no* root, char group)
 {
     printf("(");
 
@@ -369,11 +394,19 @@ void printFinalBracket(no* root)
         return;
     }
 
+    // A ordem de impressão dos grupos A e B é invertida, de forma à respeitar o formato exigido
     printf("%s ", root->nome);
-
-    printFinalBracket(root->esq);
-    printFinalBracket(root->dir);
-
+    if (group == 65) // A
+    {
+        printGroup(root->esq, group);
+        printGroup(root->dir, group);
+    }
+    else // B
+    {
+        printGroup(root->dir, group);
+        printGroup(root->esq, group);
+    }
+    
     printf(")");
 }
 
@@ -397,10 +430,12 @@ void printFinalResult(BinaryTree* bracket)
 
     // imprime a primeira linha da saída
     printf("1 %s %s %c %d\n", bracket->root->nome, bracket->root->pais, bracket->root->g, totalScore);
-    
-    printFinalBracket(bracket->root->esq);
+
+    // Imprime a situação dos dois grupos
+    char A = 65, B = 66;
+    printGroup(bracket->root->esq, A);
     printf("\n");
-    printFinalBracket(bracket->root->dir);
+    printGroup(bracket->root->dir, B);
     printf("\n");
 }
 
